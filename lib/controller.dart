@@ -25,16 +25,15 @@ class _ControllerState extends State<Controller> {
   @override
   void initState() {
     super.initState();
+    Controller.player.load('a4.wav');
     _dataSubscription = _midiCommand.onMidiDataReceived!.listen((event) {
       setState(() {
         receivedMidi = event.data;
-        if (receivedMidi[0] == push) {
+        if (receivedMidi[2] > 0 && receivedMidi[2] != 127) {
           widget.audioPlayer.setVolume(receivedMidi[2] / 1000);
           Controller.player.play('a4.wav');
-        } else {
-          receivedMidi[0] = 666;
           widget.audioPlayer.stop();
-        }
+        } else {}
       });
     });
   }
@@ -60,6 +59,10 @@ class _ControllerState extends State<Controller> {
               width: 20,
             ),
             Text(receivedMidi[2].toString()),
+            SizedBox(
+              width: 20,
+            ),
+            Text(receivedMidi.toString()),
           ],
         ),
       ),
