@@ -3,7 +3,6 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_midi_command/flutter_midi_command.dart';
 import 'dart:async';
-import 'package:midimap/audio_player_with_note.dart';
 
 class Controller extends StatefulWidget {
   MidiDevice device;
@@ -13,8 +12,10 @@ class Controller extends StatefulWidget {
   @override
   _ControllerState createState() => _ControllerState();
 
-  Future<AudioPlayer> _playFile(String nota, AudioCache cache) async {
-    player = await cache.play(nota);
+  Future<AudioPlayer> _playFile(
+      String nota, AudioCache cache, double volume) async {
+    player = await cache.play(nota, mode: PlayerMode.LOW_LATENCY);
+    player.setVolume(volume);
     return player;
   }
 }
@@ -29,18 +30,7 @@ class _ControllerState extends State<Controller> {
     late List<Future<AudioPlayer>> audioPlayers = [];
     List<int> notes = [];
     AudioCache cache = AudioCache(prefix: 'assets/sounds/');
-    cache.load('43.wav');
-    cache.load('44.wav');
-    cache.load('45.wav');
-    cache.load('46.wav');
-    cache.load('47.wav');
-    cache.load('48.wav');
-    cache.load('49.wav');
-    cache.load('50.wav');
-    cache.load('51.wav');
-    cache.load('52.wav');
-    cache.load('53.wav');
-    cache.load('54.wav');
+
     late Future<AudioPlayer> player;
 
     super.initState();
@@ -49,7 +39,8 @@ class _ControllerState extends State<Controller> {
         receivedMidi = event.data;
 
         if (receivedMidi[2] >= 1) {
-          player = widget._playFile(receivedMidi[1].toString() + ".wav", cache);
+          player = widget._playFile(receivedMidi[1].toString() + ".wav", cache,
+              receivedMidi[2] * 0.78 / 100);
           audioPlayers.add(player);
           notes.add(receivedMidi[1]);
         } else {
@@ -57,11 +48,10 @@ class _ControllerState extends State<Controller> {
             audioPlayers
                 .elementAt(notes.indexOf(receivedMidi[1]))
                 .then((value) {
-              value.stop();
+              value.setVolume(0);
             });
             audioPlayers.removeAt(notes.indexOf(receivedMidi[1]));
             notes.remove(receivedMidi[1]);
-            ;
           }
         }
       });

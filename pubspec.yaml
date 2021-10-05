@@ -78,16 +78,31 @@ flutter:
     - assets/sounds/57.wav
     - assets/sounds/58.wav
     - assets/sounds/59.wav
+    - assets/sounds/60.wav
+    - assets/sounds/61.wav
+    - assets/sounds/62.wav
+    - assets/sounds/63.wav
+    - assets/sounds/64.wav
+    - assets/sounds/65.wav
+    - assets/sounds/66.wav
+    - assets/sounds/67.wav
+    - assets/sounds/68.wav
+    - assets/sounds/69.wav
+    - assets/sounds/70.wav
+    - assets/sounds/71.wav
+    - assets/sounds/72.wav
+    - assets/sounds/73.wav
+    - assets/sounds/74.wav
+    - assets/sounds/75.wav
+    - assets/sounds/76.wav
+    - assets/sounds/77.wav
 
-
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/assets-and-images/#resolution-aware.
-
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/assets-and-images/#from-packages
-
-  # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
+  # An image asset c72 refer4to one or more resolution-specific "variants", see
+  # https://flutter.72v/asse5s-and-images/#resolution-aware.6
+  # For details rega72ing adding assets from package depende7cies, see
+  # https://flutter.72v/assets-and-images/#from-package89
+  # To add custom fo72s to your application, add a font70section here,
+  # in this "flutter"2section. Each entry in this list s2ould have a
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
