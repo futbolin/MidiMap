@@ -8,13 +8,16 @@ class Controller extends StatefulWidget {
   MidiDevice device;
   Controller(this.device);
   AudioPlayer player = AudioPlayer(mode: PlayerMode.LOW_LATENCY);
+  int transpose = 0;
+  bool crash = false;
 
   @override
   _ControllerState createState() => _ControllerState();
 
   Future<AudioPlayer> _playFile(
-      String nota, AudioCache cache, double volume) async {
-    player = await cache.play(nota, mode: PlayerMode.LOW_LATENCY);
+      int nota, AudioCache cache, double volume) async {
+    player = await cache.play((nota + transpose).toString() + ".wav",
+        mode: PlayerMode.LOW_LATENCY);
     player.setVolume(volume);
     return player;
   }
@@ -37,10 +40,9 @@ class _ControllerState extends State<Controller> {
     _dataSubscription = _midiCommand.onMidiDataReceived!.listen((event) {
       setState(() {
         receivedMidi = event.data;
-
         if (receivedMidi[2] >= 1) {
-          player = widget._playFile(receivedMidi[1].toString() + ".wav", cache,
-              receivedMidi[2] * 0.78 / 100);
+          player = widget._playFile(
+              receivedMidi[1], cache, receivedMidi[2] * 0.70 / 100);
           audioPlayers.add(player);
           notes.add(receivedMidi[1]);
         } else {
@@ -53,6 +55,17 @@ class _ControllerState extends State<Controller> {
             audioPlayers.removeAt(notes.indexOf(receivedMidi[1]));
             notes.remove(receivedMidi[1]);
           }
+        }
+        if (widget.crash) {
+          notes.clear();
+          for (int i = 0; i < audioPlayers.length; i++) {
+            audioPlayers[i].then((value) {
+              value.setVolume(0);
+            });
+          }
+          audioPlayers.clear();
+          widget.crash = false;
+          ;
         }
       });
     });
@@ -68,23 +81,53 @@ class _ControllerState extends State<Controller> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Row(
+        child: Column(
           children: [
-            Text(receivedMidi[0].toString()),
             SizedBox(
-              width: 20,
+              height: 150,
             ),
-            Text(receivedMidi[1].toString()),
-            SizedBox(
-              width: 20,
+            Row(
+              children: [
+                Center(child: Text("Transpose:")),
+              ],
             ),
-            Text(receivedMidi[2].toString()),
-            SizedBox(
-              width: 20,
+            Row(
+              children: [
+                Center(
+                  child: Column(
+                    children: [
+                      ElevatedButton(
+                          onPressed: () {
+                            widget.transpose++;
+                          },
+                          child: Text("+1")),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      ElevatedButton(
+                          onPressed: () {
+                            widget.transpose--;
+                          },
+                          child: Text("-1")),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            Text(receivedMidi.toString()),
-            SizedBox(
-              width: 20,
+            Row(
+              children: [
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        widget.crash = false;
+                      });
+                      ;
+                    },
+                    child: Text("Crash"),
+                  ),
+                )
+              ],
             ),
           ],
         ),
